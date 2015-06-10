@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: UTF-8 -*-
 
 # Python module gnome_connection_manager.py
@@ -204,7 +204,7 @@ app_version = "1.1.0"
 app_web = "http://www.kuthulu.com/gcm"
 app_fileversion = "1"
 
-BASE_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
+BASE_PATH = '/usr/share/gnome-connection-manager'
 
 SSH_BIN = 'ssh'
 TEL_BIN = 'telnet'
@@ -247,7 +247,7 @@ _CONNECT = ["connect"]
 
 ICON_PATH = BASE_PATH + "/icon.png"
 
-glade_dir = ""
+glade_dir = BASE_PATH
 locale_dir = BASE_PATH + "/lang"
 
 bindtextdomain(domain_name, locale_dir)
@@ -673,6 +673,23 @@ class Wmain(SimpleGladeApp):
                 cb.set_text(host.host)
                 cb.store()
             return True
+        elif item == 'SCPF': #COPY TO CLIPDOARD SCP STRING OF DONOR HOST
+            if self.treeServers.get_selection().get_selected()[1]!=None and not self.treeModel.iter_has_child(self.treeServers.get_selection().get_selected()[1]):
+                host = self.treeModel.get_value(self.treeServers.get_selection().get_selected()[1],1)
+                cb = gtk.Clipboard()
+                scpstr = "scp " + host.user + "@" + host.host + ":"
+                cb.set_text(scpstr)
+                cb.store()
+            return True
+        elif item == 'SCPT': #COPY TO CLIPDOARD SCP STRING OF RECEPIENT HOST
+            if self.treeServers.get_selection().get_selected()[1]!=None and not self.treeModel.iter_has_child(self.treeServers.get_selection().get_selected()[1]):
+                host = self.treeModel.get_value(self.treeServers.get_selection().get_selected()[1],1)
+                cb = gtk.Clipboard()
+                scpstr = "scp ./ " + host.user + "@" + host.host + ":"
+                cb.set_text(scpstr)
+                cb.store()
+            return True
+
         elif item == 'D': #DUPLICATE HOST
             if self.treeServers.get_selection().get_selected()[1]!=None and not self.treeModel.iter_has_child(self.treeServers.get_selection().get_selected()[1]):                
                 selected = self.treeServers.get_selection().get_selected()[1]            
@@ -849,7 +866,19 @@ class Wmain(SimpleGladeApp):
         self.popupMenuFolder.append(menuItem)
         menuItem.connect("activate", self.on_popupmenu, 'H')
         menuItem.show()
-        
+
+        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard <--"))
+        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        self.popupMenuFolder.append(menuItem)
+        menuItem.connect("activate", self.on_popupmenu, 'SCPF')
+        menuItem.show()
+
+        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard -->"))
+        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        self.popupMenuFolder.append(menuItem)
+        menuItem.connect("activate", self.on_popupmenu, 'SCPT')
+        menuItem.show()
+
         self.popupMenuFolder.mnuAdd = menuItem = gtk.ImageMenuItem(_("Agregar Host"))
         menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU))
         self.popupMenuFolder.append(menuItem)
