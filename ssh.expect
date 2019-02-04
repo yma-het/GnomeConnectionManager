@@ -26,13 +26,22 @@ foreach {arg} $argv {
    }
 }
 
+set i 0
+set ssh_executable "/usr/bin/ssh"
+foreach {arg} $argv { 
+   set i [ expr $i+1 ]; 
+   if {$arg=="--ssh-executable"} {
+      set ssh_executable [ lindex $argv $i ]
+   }
+}
+
 if { $connection == "telnet" } {
     set timeout 20
     set cmd "/usr/bin/telnet"
     set reg "assword:"
 } else {
     set timeout -1
-    set cmd "/usr/bin/ssh"
+    set cmd $ssh_executable
     set reg "assword:"
 }
 

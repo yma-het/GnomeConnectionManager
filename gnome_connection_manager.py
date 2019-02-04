@@ -1137,8 +1137,9 @@ class Wmain(SimpleGladeApp):
                     if len(host.user)==0:
                         host.user = get_username()
                     if host.password == '':
-                        cmd = SSH_BIN
-                        args = [ SSH_BIN, '-l', host.user, '-p', host.port]
+                        path_to_executable = host.ssh_executable_path if host.ssh_executable_path else SSH_BIN
+                        cmd = path_to_executable
+                        args = [ path_to_executable, '-l', host.user, '-p', host.port]
                     else:
                         args = [SSH_COMMAND, host.type, '-l', host.user, '-p', host.port]                                       
                     if host.keep_alive!='0' and host.keep_alive!='':
@@ -1166,6 +1167,8 @@ class Wmain(SimpleGladeApp):
                         args.append(host.private_key)
                     if host.extra_params != None and host.extra_params != '':
                         args += host.extra_params.split()
+                    if host.ssh_executable_path != None and host.ssh_executable_path != '' and host.password != '':
+                        args += ["--ssh-executable", host.ssh_executable_path]
                     args.append(host.host)
                 else:
                     if host.user=='' or host.password=='':
@@ -2074,6 +2077,7 @@ class Host():
             self.compression = self.get_arg(args,False)
             self.compressionLevel = self.get_arg(args,'')
             self.extra_params = self.get_arg(args, '')
+            self.ssh_executable_path = self.get_arg(args, '')
             self.log = self.get_arg(args, False)
             self.backspace_key = self.get_arg(args, int(vte.ERASE_AUTO))
             self.delete_key = self.get_arg(args, int(vte.ERASE_AUTO))
@@ -2093,7 +2097,31 @@ class Host():
         return ",".join(self.tunnel)
 
     def clone(self):
-        return Host(self.group, self.name, self.description, self.host, self.user, self.password, self.private_key, self.port, self.tunnel_as_string(), self.type, self.commands, self.keep_alive, self.font_color, self.back_color, self.x11, self.agent, self.compression, self.compressionLevel, self.extra_params, self.log, self.backspace_key, self.delete_key)
+        return Host(
+            self.group,
+            self.name,
+            self.description,
+            self.host,
+            self.user,
+            self.password,
+            self.private_key,
+            self.port,
+            self.tunnel_as_string(),
+            self.type,
+            self.commands,
+            self.keep_alive,
+            self.font_color,
+            self.back_color,
+            self.x11,
+            self.agent,
+            self.compression,
+            self.compressionLevel,
+            self.extra_params,
+            self.ssh_executable_path,
+            self.log,
+            self.backspace_key,
+            self.delete_key
+        )
 
 class HostUtils:
     @staticmethod
@@ -2126,10 +2154,11 @@ class HostUtils:
         compression = HostUtils.get_val(cp, section, "compression", False)
         compressionLevel = HostUtils.get_val(cp, section, "compression-level", "")
         extra_params = HostUtils.get_val(cp, section, "extra_params", "")
+        ssh_executable_path = HostUtils.get_val(cp, section, "ssh_executable_path", "")
         log = HostUtils.get_val(cp, section, "log", False)
         backspace_key = int(HostUtils.get_val(cp, section, "backspace-key", int(vte.ERASE_AUTO)))
         delete_key = int(HostUtils.get_val(cp, section, "delete-key", int(vte.ERASE_AUTO)))
-        h = Host(group, name, description, host, user, password, private_key, port, tunnel, ctype, commands, keepalive, fcolor, bcolor, x11, agent, compression, compressionLevel,  extra_params, log, backspace_key, delete_key)
+        h = Host(group, name, description, host, user, password, private_key, port, tunnel, ctype, commands, keepalive, fcolor, bcolor, x11, agent, compression, compressionLevel,  extra_params, ssh_executable_path, log, backspace_key, delete_key)
         return h
 
     @staticmethod
@@ -2155,6 +2184,7 @@ class HostUtils:
         cp.set(section, "compression", host.compression)
         cp.set(section, "compression-level", host.compressionLevel)
         cp.set(section, "extra_params", host.extra_params)
+        cp.set(section, "ssh_executable_path", host.ssh_executable_path)
         cp.set(section, "log", host.log)
         cp.set(section, "backspace-key", host.backspace_key)
         cp.set(section, "delete-key", host.delete_key)
@@ -2216,6 +2246,7 @@ class Whost(SimpleGladeApp):
         self.chkCompression = self.get_widget("chkCompression")
         self.txtCompressionLevel = self.get_widget("txtCompressionLevel")
         self.txtExtraParams = self.get_widget("txtExtraParams")
+        self.txtSshPath = self.get_widget("txtSshPath")
         self.chkLogging = self.get_widget("chkLogging")
         self.cmbBackspace = self.get_widget("cmbBackspace")
         self.cmbDelete = self.get_widget("cmbDelete")
@@ -2293,6 +2324,7 @@ class Whost(SimpleGladeApp):
         self.chkCompression.set_active(host.compression)
         self.txtCompressionLevel.set_text(host.compressionLevel)
         self.txtExtraParams.set_text(host.extra_params)
+        self.txtSshPath.set_text(host.ssh_executable_path)
         self.chkLogging.set_active(host.log)
         self.cmbBackspace.set_active(host.backspace_key)
         self.cmbDelete.set_active(host.delete_key)
@@ -2348,6 +2380,7 @@ class Whost(SimpleGladeApp):
         compression = self.chkCompression.get_active()
         compressionLevel = self.txtCompressionLevel.get_text().strip()
         extra_params = self.txtExtraParams.get_text()
+        ssh_executable_path = self.txtSshPath.get_text()
         log = self.chkLogging.get_active()
         backspace_key = self.cmbBackspace.get_active()
         delete_key = self.cmbDelete.get_active()
@@ -2370,7 +2403,31 @@ class Whost(SimpleGladeApp):
             msgbox(_("Puerto invalido"))
             return
         
-        host = Host(group, name, description, host, user, password, private_key, port, tunnel, ctype, commands, keepalive, fcolor, bcolor, x11, agent, compression, compressionLevel,  extra_params, log, backspace_key, delete_key)
+        host = Host(
+            group,
+            name,
+            description,
+            host,
+            user,
+            password,
+            private_key,
+            port,
+            tunnel,
+            ctype,
+            commands,
+            keepalive,
+            fcolor,
+            bcolor,
+            x11,
+            agent,
+            compression,
+            compressionLevel,
+            extra_params,
+            ssh_executable_path,
+            log,
+            backspace_key,
+            delete_key
+        )
                     
         try:
             #Guardar                
@@ -2434,6 +2491,7 @@ class Whost(SimpleGladeApp):
         self.txtPort.set_sensitive(not is_local)
         self.txtHost.set_sensitive(not is_local)
         self.txtExtraParams.set_sensitive(not is_local)
+        self.txtSshPath.set_sensitive(not is_local)
         
         if widget.get_active_text()=="ssh":
             self.get_widget("table2").show_all()
