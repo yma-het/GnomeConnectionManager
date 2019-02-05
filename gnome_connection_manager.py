@@ -1352,12 +1352,12 @@ class Wmain(SimpleGladeApp):
         except:
             scuts["CTRL+K"] = _CLEAR
 
-        #shortcuts para cambiar consola1-consola9
-        for x in range(1,10):
-            try:
-                scuts[cp.get("shortcuts", "console_%d" % (x) )] = eval("_CONSOLE_%d" % (x))                
-            except:
-                scuts["F%d" % (x)] = eval("_CONSOLE_%d" % (x))                
+        # #shortcuts para cambiar consola1-consola9
+        # for x in range(1,10):
+        #     try:
+        #         scuts[cp.get("shortcuts", "console_%d" % (x) )] = eval("_CONSOLE_%d" % (x))                
+        #     except:
+        #         scuts["F%d" % (x)] = eval("_CONSOLE_%d" % (x))                
         try:
             i = 1            
             while True:
