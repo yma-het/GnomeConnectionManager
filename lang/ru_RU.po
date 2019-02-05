@@ -77,7 +77,7 @@ msgstr "Закрыть консоль"
 #: ../gnome_connection_manager.py:804 ../gnome-connection-manager.glade:361
 #: ../gnome_connection_manager.py:841 ../gnome-connection-manager.glade:500
 msgid "Conectar"
-msgstr "Соединить"
+msgstr "Соединиться"
 
 #: ../gnome_connection_manager.py:374 ../gnome_connection_manager.py:383
 #: ../gnome_connection_manager.py:455 ../gnome_connection_manager.py:533
@@ -377,7 +377,7 @@ msgstr "Хост с именем"
 #: ../gnome_connection_manager.py:2354 ../gnome_connection_manager.py:2366
 #: ../gnome_connection_manager.py:2377
 msgid "ya existe para el grupo"
-msgstr "уже есть в группе"
+msgstr "Уже есть в группе"
 
 #: ../gnome_connection_manager.py:851 ../gnome_connection_manager.py:1304
 #: ../gnome_connection_manager.py:1315 ../gnome_connection_manager.py:1489
@@ -549,7 +549,7 @@ msgstr "Добавить новый хост"
 #: ../gnome-connection-manager.glade:3559
 #: ../gnome-connection-manager.glade:3698
 msgid "Atajos"
-msgstr "Ярлыки"
+msgstr "Горячие влавиши"
 
 #: ../gnome-connection-manager.glade.h:7 ../gnome-connection-manager.glade:135
 #: ../gnome-connection-manager.glade:147 ../gnome-connection-manager.glade:181
@@ -1049,7 +1049,7 @@ msgstr "Пользовательские команды"
 #: ../gnome_connection_manager.py:781 ../gnome_connection_manager.py:834
 #: ../gnome_connection_manager.py:871
 msgid "Duplicar Host"
-msgstr "Хост уже существует"
+msgstr "Копировать"
 
 #: ../gnome_connection_manager.py:655 ../gnome_connection_manager.py:805
 #: ../gnome_connection_manager.py:823 ../gnome_connection_manager.py:876
@@ -1063,7 +1063,7 @@ msgstr "Переподключиться к хосту"
 #: ../gnome_connection_manager.py:882 ../gnome_connection_manager.py:808
 #: ../gnome_connection_manager.py:919
 msgid "Clonar consola"
-msgstr "клон консоль"
+msgstr "Дублировать консоль"
 
 #: ../gnome_connection_manager.py:1476 ../gnome_connection_manager.py:1657
 #: ../gnome_connection_manager.py:1706 ../gnome_connection_manager.py:1807
@@ -1145,7 +1145,7 @@ msgstr "Копировать и Вставить"
 
 #: ../gnome-connection-manager.glade:122
 msgid "_Salir"
-msgstr "_выходи"
+msgstr "_Выход"
 
 #: ../gnome-connection-manager.glade:1348
 #: ../gnome-connection-manager.glade:1292
@@ -1159,7 +1159,7 @@ msgstr "Чтобы создать подгруппы использовать ф
 #: ../gnome_connection_manager.py:777 ../gnome_connection_manager.py:888
 #: ../gnome_connection_manager.py:814 ../gnome_connection_manager.py:925
 msgid "Habilitar log"
-msgstr "включить журнал"
+msgstr "Включить журнал"
 
 #: ../gnome_connection_manager.py:861 ../gnome_connection_manager.py:879
 #: ../gnome_connection_manager.py:932 ../gnome_connection_manager.py:1026
@@ -1183,26 +1183,26 @@ msgstr "Закрытый ключ"
 #: ../gnome-connection-manager.glade:1880
 #: ../gnome-connection-manager.glade:2019
 msgid "Redirigir Agente"
-msgstr "Проброс агент"
+msgstr "Проброс ssh агент"
 
 #: ../gnome-connection-manager.glade:1846
 #: ../gnome-connection-manager.glade:1895
 #: ../gnome-connection-manager.glade:2029
 #: ../gnome-connection-manager.glade:2168
 msgid "Habilitar Log"
-msgstr "включить журнал"
+msgstr "Включить журнал"
 
 #: ../gnome-connection-manager.glade:1359
 #: ../gnome-connection-manager.glade:1394
 #: ../gnome-connection-manager.glade:1533
 msgid "Descripción"
-msgstr "описание"
+msgstr "Описание"
 
 #: ../gnome-connection-manager.glade:2034
 #: ../gnome-connection-manager.glade:2168
 #: ../gnome-connection-manager.glade:2307
 msgid "Dinámico"
-msgstr "динамик"
+msgstr "Динамик"
 
 #: ../gnome-connection-manager.glade:2035
 #: ../gnome-connection-manager.glade:2169
@@ -1253,7 +1253,7 @@ msgstr "показать панель"
 #: ../gnome-connection-manager.glade:1931
 #: ../gnome-connection-manager.glade:2070
 msgid "Compresión"
-msgstr "сжатие"
+msgstr "Сжатие"
 
 #: ../gnome-connection-manager.glade:1962
 #: ../gnome-connection-manager.glade:2101
@@ -1271,17 +1271,20 @@ msgstr ""
 #: ../gnome-connection-manager.glade:1979
 #: ../gnome-connection-manager.glade:2118
 msgid "Opciones extra"
-msgstr "дополнительные аргументы"
+msgstr "Дополнительные аргументы"
 
 #: ../gnome-connection-manager.glade:2015
 #: ../gnome-connection-manager.glade:2154
 msgid "Parámetros extra a pasar a la línea de comandos"
 msgstr "дополнительные аргументы для передачи командной строки"
 
+msgid "ssh executable path"
+msgstr "Путь к исполняемому файлу ssh"
+
 #: ../gnome-connection-manager.glade:2851
 #: ../gnome-connection-manager.glade:2990
 msgid "Sequencias de Teclas:"
-msgstr "ключи последовательности"
+msgstr "Escape-последовательности"
 
 #: ../gnome-connection-manager.glade:2880
 #: ../gnome-connection-manager.glade:3019
@@ -1296,7 +1299,7 @@ msgstr "Delete:"
 #: ../gnome-connection-manager.glade:2989
 #: ../gnome-connection-manager.glade:3128
 msgid "Colores y Teclas"
-msgstr "цветов и ключи"
+msgstr "Цвета и escape-последовательности"
 
 #: ../gnome_connection_manager.py:780 ../gnome-connection-manager.glade:231
 msgid "Copiar todo"
