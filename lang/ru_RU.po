@@ -1001,7 +1001,7 @@ msgstr "Скрыть напоминание о пожертвовании"
 #: ../gnome_connection_manager.py:2401 ../gnome_connection_manager.py:2502
 #: ../gnome_connection_manager.py:2633 ../gnome_connection_manager.py:2803
 msgid "Seleccione la fuente"
-msgstr "Выберите фонт"
+msgstr "Выберите шрифт"
 
 #: ../gnome-connection-manager.glade:1321
 #: ../gnome-connection-manager.glade:1423
@@ -1093,7 +1093,7 @@ msgstr "Отправить команду одновременно нескол�
 #: ../gnome-connection-manager.glade:1156
 #: ../gnome-connection-manager.glade:3730
 msgid "Cluster"
-msgstr "Кластер"
+msgstr "Операции над множеством хостов"
 
 #: ../gnome-connection-manager.glade:3010
 #: ../gnome-connection-manager.glade:3220
