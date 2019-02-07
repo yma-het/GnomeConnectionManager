@@ -1,6 +1,6 @@
 Summary: A tabbed SSH connection manager for GTK+ environments
 Name: gnome-connection-manager
-Version: 1.2.0
+Version: 1.2.1
 Release: 1%{?dist}
 License: GPLv3 and MIT
 URL: http://kuthulu.com/gcm/
@@ -86,6 +86,13 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sat Feb 07 2019 Yury Molodtsov <yma.het@gmail.com> - 1.2.1-1
+- Added fullscreen mode
+- Added ability to chose custom ssh binary
+- Removed plain function keys shortcuts
+- Corrected locales compilation
+- Rewrited spec to work from git repo
+
 * Thu Nov 06 2014 Mat Booth <mat.booth@redhat.com> - 1.1.0-4
 - Add appstream appdata.
 - Install locales correctly.
