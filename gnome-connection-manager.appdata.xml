@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Mat Booth <mat.booth@redhat.com> -->
+<application>
+ <id type="desktop">gnome-connection-manager.desktop</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>GPL-3.0</project_license>
+ <name>Gnome Connection Manager</name>
+ <summary>A tabbed SSH connection manager for GTK+ environments</summary>
+ <description>
+  <p>Gnome Connection Manager can store passwords for easy access to hosts and supports multiple ssh tunnels for each host.</p>
+  <p>It has unlimited vertical/horizontal window splitting (you can have as many visible consoles as you want).</p>
+  <p>Drag and Drop tabs between consoles, connect to multiple hosts with just one click.</p>
+  <p>Cluster mode allows you to work on several hosts at the same time.</p>
+ </description>
+ <screenshots>
+  <screenshot type="default" width="1366" height="724">https://lh3.googleusercontent.com/-HQKbEL4fBXQ/Tt_3K-3EmsI/AAAAAAAAAHU/m3MQNS_ePrA/s1366/screen-02.png</screenshot>
+ </screenshots>
+ <url type="homepage">http://kuthulu.com/gcm/</url>
+ <updatecontact>mat.booth@redhat.com</updatecontact>
+</application>

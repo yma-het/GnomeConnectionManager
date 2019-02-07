@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Gnome Connection Manager
+Comment=Tabbed SSH connection manager
+Exec=gnome-connection-manager
+Icon=gnome-connection-manager
+Terminal=false
+StartupWMClass=gnome_connection_manager.py
+Type=Application
+StartupNotify=true
+X-Desktop-File-Install-Version=0.22
+Categories=GNOME;GTK;Utility;
