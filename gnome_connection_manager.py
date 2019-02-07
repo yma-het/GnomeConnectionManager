@@ -241,6 +241,7 @@ _CONSOLE_6 = ["console_6"]
 _CONSOLE_7 = ["console_7"]
 _CONSOLE_8 = ["console_8"]
 _CONSOLE_9 = ["console_9"]
+_FULLSCREEN = ["fullscreen"]
 _CONSOLE_CLOSE = ["console_close"]
 _CONSOLE_RECONNECT = ["console_reconnect"]
 _CONNECT = ["connect"]
@@ -444,6 +445,9 @@ class Wmain(SimpleGladeApp):
         
         self.createMenu()
         
+        self._current_fullscreen_state = False
+        self._mouse_is_over_tree_view = False
+
         if conf.VERSION == 0:
             initialise_encyption_key()
         
@@ -563,6 +567,18 @@ class Wmain(SimpleGladeApp):
                     widget.get_parent().get_parent().prev_page()
                 elif cmd == _CONSOLE_NEXT:
                     widget.get_parent().get_parent().next_page()
+                elif cmd == _FULLSCREEN:
+                    if self._current_fullscreen_state:
+                        self.hpMain.window.unfullscreen()
+                        self.get_widget("toolbar1").show()
+                        self.get_widget("menubar1").show()
+                        self._current_fullscreen_state = False
+                    else:
+                        self.hpMain.window.fullscreen()
+                        self.get_widget("toolbar1").hide()
+                        self.get_widget("menubar1").hide()
+                        self._current_fullscreen_state = True
+
                 elif cmd == _CONSOLE_CLOSE:
                     wid = widget.get_parent()                    
                     page = widget.get_parent().get_parent().page_num(wid)                    
@@ -1330,6 +1346,11 @@ class Wmain(SimpleGladeApp):
             scuts[cp.get("shortcuts", "console_next")] = _CONSOLE_NEXT
         except:
             scuts["CTRL+SHIFT+RIGHT"] = _CONSOLE_NEXT
+
+        try:
+            scuts[cp.get("shortcuts", "fullscreen")] = _FULLSCREEN
+        except:
+            scuts["F11"] = _FULLSCREEN
 
         try:
             scuts[cp.get("shortcuts", "console_close")] = _CONSOLE_CLOSE
