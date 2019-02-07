@@ -359,7 +359,7 @@ msgstr "Некорректный порт"
 #: ../gnome_connection_manager.py:2354 ../gnome_connection_manager.py:2366
 #: ../gnome_connection_manager.py:2377
 msgid "El nombre"
-msgstr "Хост с именем"
+msgstr "Хост с таким именем"
 
 #: ../gnome_connection_manager.py:806 ../gnome_connection_manager.py:817
 #: ../gnome_connection_manager.py:827 ../gnome_connection_manager.py:1257
@@ -377,7 +377,7 @@ msgstr "Хост с именем"
 #: ../gnome_connection_manager.py:2354 ../gnome_connection_manager.py:2366
 #: ../gnome_connection_manager.py:2377
 msgid "ya existe para el grupo"
-msgstr "Уже есть в группе"
+msgstr "уже присутствует в группе"
 
 #: ../gnome_connection_manager.py:851 ../gnome_connection_manager.py:1304
 #: ../gnome_connection_manager.py:1315 ../gnome_connection_manager.py:1489
@@ -385,7 +385,7 @@ msgstr "Уже есть в группе"
 #: ../gnome_connection_manager.py:2023 ../gnome_connection_manager.py:2116
 #: ../gnome_connection_manager.py:2222 ../gnome_connection_manager.py:2391
 msgid "Error al guardar el host. Descripcion"
-msgstr "Не могу сохранить хост. Описание"
+msgstr "Ошибка при сохранении хоста. Описание"
 
 #: ../gnome_connection_manager.py:879 ../gnome_connection_manager.py:1332
 #: ../gnome_connection_manager.py:1343 ../gnome_connection_manager.py:1526
@@ -848,7 +848,7 @@ msgstr "Тип"
 #: ../gnome-connection-manager.glade:2534
 #: ../gnome-connection-manager.glade:2673
 msgid "Túnel"
-msgstr "Тоннель"
+msgstr "Тоннели"
 
 #: ../gnome-connection-manager.glade.h:36
 #: ../gnome-connection-manager.glade:711 ../gnome-connection-manager.glade:723
@@ -927,7 +927,7 @@ msgid ""
 "Hay una nueva version disponible en http://kuthulu.com/gcm/?module=download"
 msgstr ""
 "На сайте http://kuthulu.com/gcm/?module=download доступна новая версия "
-"программы"
+"программы (или нет)"
 
 #: ../gnome_connection_manager.py:399 ../gnome_connection_manager.py:491
 #: ../gnome_connection_manager.py:449 ../gnome_connection_manager.py:569
@@ -937,7 +937,7 @@ msgstr ""
 #: ../gnome_connection_manager.py:661 ../gnome_connection_manager.py:858
 #: ../gnome_connection_manager.py:692 ../gnome_connection_manager.py:895
 msgid "Renombrar consola"
-msgstr "Переименовать закладку"
+msgstr "Переименовать вкладку"
 
 #: ../gnome_connection_manager.py:399 ../gnome_connection_manager.py:449
 #: ../gnome_connection_manager.py:483 ../gnome_connection_manager.py:590
@@ -971,7 +971,7 @@ msgstr "Отправлять Keep-Alive"
 #: ../gnome-connection-manager.glade:1808
 #: ../gnome-connection-manager.glade:1947
 msgid "Intervalo en segundos para enviar paquetes keep-alive"
-msgstr "Секунд между keep-alive пакетами"
+msgstr "Интервал между отправкой keep-alive пакетов"
 
 #: ../gnome_connection_manager.py:500 ../gnome_connection_manager.py:575
 #: ../gnome_connection_manager.py:549 ../gnome_connection_manager.py:643
@@ -1152,7 +1152,7 @@ msgstr "_Выход"
 #: ../gnome-connection-manager.glade:1327
 #: ../gnome-connection-manager.glade:1466
 msgid "Usar formato grupo1/grupo2/grupo3 para crear subgrupos"
-msgstr "Чтобы создать подгруппы использовать формат группе1/группе2/группе3"
+msgstr "Чтобы создать подгруппы используйте формат группа1/группа2/группа3"
 
 #: ../gnome_connection_manager.py:706 ../gnome_connection_manager.py:817
 #: ../gnome_connection_manager.py:724 ../gnome_connection_manager.py:835
@@ -1164,12 +1164,12 @@ msgstr "Включить журнал"
 #: ../gnome_connection_manager.py:861 ../gnome_connection_manager.py:879
 #: ../gnome_connection_manager.py:932 ../gnome_connection_manager.py:1026
 msgid "No se puede abrir el archivo de log para escritura"
-msgstr "Не могу открыть лог-файл для записи"
+msgstr "Невозможно открыть лог-файл для записи"
 
 #: ../gnome_connection_manager.py:2182 ../gnome_connection_manager.py:2283
 #: ../gnome_connection_manager.py:2401 ../gnome_connection_manager.py:2570
 msgid "Ruta de logs"
-msgstr "путь к файлу журнала"
+msgstr "Путь к файлу журнала"
 
 #: ../gnome-connection-manager.glade:1458
 #: ../gnome-connection-manager.glade:1507
@@ -1183,7 +1183,7 @@ msgstr "Закрытый ключ"
 #: ../gnome-connection-manager.glade:1880
 #: ../gnome-connection-manager.glade:2019
 msgid "Redirigir Agente"
-msgstr "Проброс ssh агент"
+msgstr "Проброс ssh агента"
 
 #: ../gnome-connection-manager.glade:1846
 #: ../gnome-connection-manager.glade:1895
@@ -1202,13 +1202,13 @@ msgstr "Описание"
 #: ../gnome-connection-manager.glade:2168
 #: ../gnome-connection-manager.glade:2307
 msgid "Dinámico"
-msgstr "Динамик"
+msgstr "Динамический"
 
 #: ../gnome-connection-manager.glade:2035
 #: ../gnome-connection-manager.glade:2169
 #: ../gnome-connection-manager.glade:2308
 msgid "Crear redirección dinámica de puertos"
-msgstr "Создание динамических экспедирование"
+msgstr "Динамическое перенаправление порта"
 
 #: ../gnome-connection-manager.glade:2449
 #: ../gnome-connection-manager.glade:2583
@@ -1217,38 +1217,38 @@ msgid ""
 "<span size='smaller'>Usar ##D=milisegundos para introducir un delay.\n"
 "Ej: ##D=1000</span>"
 msgstr ""
-"<span size='smaller'>Использование ##D=миллисекунды ввести задержку.\n"
+"<span size='smaller'>Для задержки перед исполнением команды используйте запись вида ##D=миллисекунд\n"
 "например: ##D=1000</span>"
 
 #: ../gnome-connection-manager.glade:3732
 #: ../gnome-connection-manager.glade:4043
 #: ../gnome-connection-manager.glade:4183
 msgid "<span size=\"smaller\">CTRL+UP/CTRL+DOWN para historial</span>"
-msgstr "<span size=\"smaller\">CTRL+UP/CTRL+DOWN для истории</span>"
+msgstr "<span size=\"smaller\">CTRL+UP/CTRL+DOWN для прокрутки истории</span>"
 
 #: ../gnome_connection_manager.py:2405 ../gnome_connection_manager.py:2575
 msgid "Nunca"
-msgstr "никогда"
+msgstr "Никогда"
 
 #: ../gnome_connection_manager.py:2405 ../gnome_connection_manager.py:2575
 msgid "Siempre"
-msgstr "всегда"
+msgstr "Всегда"
 
 #: ../gnome_connection_manager.py:2405 ../gnome_connection_manager.py:2575
 msgid "Sólo si no hay errores"
-msgstr "только при отсутствии ошибок"
+msgstr "Только при отсутствии ошибок"
 
 #: ../gnome-connection-manager.glade:147 ../gnome-connection-manager.glade:274
 msgid "_Ver"
-msgstr "Вид"
+msgstr "_Вид"
 
 #: ../gnome-connection-manager.glade:155 ../gnome-connection-manager.glade:282
 msgid "Mostrar Toolbar"
-msgstr "показать панель инструментов"
+msgstr "Показать панель инструментов"
 
 #: ../gnome-connection-manager.glade:165 ../gnome-connection-manager.glade:292
 msgid "Mostrar Panel"
-msgstr "показать панель"
+msgstr "Показать панель с хостами"
 
 #: ../gnome-connection-manager.glade:1931
 #: ../gnome-connection-manager.glade:2070
@@ -1263,10 +1263,10 @@ msgid ""
 "1: min\n"
 "9: max"
 msgstr ""
-"степень сжатия: \n"
-"пустой: по умолчанию\n"
-"1: мин\n"
-"9: макс"
+"Степень сжатия: \n"
+"для незаполненного поля применяется умолчательное сжатие\n"
+"1: минимальная степень\n"
+"9: максимальная степень"
 
 #: ../gnome-connection-manager.glade:1979
 #: ../gnome-connection-manager.glade:2118
@@ -1276,7 +1276,7 @@ msgstr "Дополнительные аргументы"
 #: ../gnome-connection-manager.glade:2015
 #: ../gnome-connection-manager.glade:2154
 msgid "Parámetros extra a pasar a la línea de comandos"
-msgstr "дополнительные аргументы для передачи командной строки"
+msgstr "Lополнительные аргументы для передачи командной строке"
 
 msgid "ssh executable path"
 msgstr "Путь к исполняемому файлу ssh"
