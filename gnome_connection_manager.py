@@ -755,6 +755,7 @@ class Wmain(SimpleGladeApp):
                 #esperar 2 seg antes de enviar el pass para dar tiempo a que se levante expect y prevenir que se muestre el pass
                 if term.command[2]!=None and term.command[2]!='':
                     gobject.timeout_add(2000, self.send_data, term, term.command[2])
+            term.reset(True, False)
             tab.mark_tab_as_active()
             return True
         elif item == 'CC' or item == 'CC2': #CLONE CONSOLE
