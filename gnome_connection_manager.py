@@ -165,38 +165,37 @@ import time
 import tempfile
 
 try:
-    import gtk
-    import gobject
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+    from gi.repository import GObject
 except:
-    print >> sys.stderr, "pygtk required"
+    print("pygtk required", file=sys.stderr)
     sys.exit(1)
   
-try:
-    import vte
-except:
-    error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK,
-      'You must install libvte for python')
-    error.run()
-    sys.exit (1)
+# try:
+#     import vte
+# except:
+#     error = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 'You must install libvte for python')
+#     error.run()
+#     sys.exit (1)
 
 #Ver si expect esta instalado
-try:
-    e = os.system("expect >/dev/null 2>&1 -v")
-except:
-    e = -1
-if e != 0:
-    error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK,
-      'You must install expect')
-    error.run()
-    sys.exit (1)
+# try:
+#     e = os.system("expect >/dev/null 2>&1 -v")
+# except:
+#     e = -1
+# if e != 0:
+#     error = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 'You must install expect')
+#     error.run()
+#     sys.exit (1)
 
-gtk.gdk.threads_init()
+Gdk.threads_init()
 
 from SimpleGladeApp import SimpleGladeApp
 from SimpleGladeApp import bindtextdomain
 
-import ConfigParser
-import pango
+from configparser import ConfigParser
+import manimpango as pango
 import pyAES
 
 app_name = "Gnome Connection Manager"
@@ -284,13 +283,13 @@ class conf():
     VERSION = 0
 
 def msgbox(text, parent=None):
-    msgBox = gtk.MessageDialog(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, text)
+    msgBox = Gtk.MessageDialog(parent, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, text)
     msgBox.set_icon_from_file(ICON_PATH)
     msgBox.run()    
     msgBox.destroy()
 
 def msgconfirm(text):
-    msgBox = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, text)
+    msgBox = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, text)
     msgBox.set_icon_from_file(ICON_PATH)
     response = msgBox.run()    
     msgBox.destroy()
@@ -300,7 +299,7 @@ def msgconfirm(text):
 def inputbox(title, text, default='', password=False):
     msgBox = EntryDialog(title, text, default, mask=password)
     msgBox.set_icon_from_file(ICON_PATH)
-    if msgBox.run() == gtk.RESPONSE_OK:
+    if msgBox.run() == Gtk.ResponseType.OK:
         response = msgBox.value
     else:
         response = None
@@ -312,29 +311,29 @@ def show_font_dialog(parent, title, button):
         parent.dlgFont = None
         
     if parent.dlgFont == None:
-        parent.dlgFont = gtk.FontSelectionDialog(title)
+        parent.dlgFont = Gtk.FontSelectionDialog(title)
     fontsel = parent.dlgFont.fontsel
     fontsel.set_font_name(button.selected_font.to_string())    
 
     response = parent.dlgFont.run()
 
-    if response == gtk.RESPONSE_OK:        
+    if response == Gtk.ResponseType.OK:        
         button.selected_font = pango.FontDescription(fontsel.get_font_name())        
         button.set_label(button.selected_font.to_string())
         button.get_child().modify_font(button.selected_font)
     parent.dlgFont.hide()
     
 def show_open_dialog(parent, title, action):        
-    dlg = gtk.FileChooserDialog(title=title, parent=parent, action=action)
-    dlg.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+    dlg = Gtk.FileChooserDialog(title=title, parent=parent, action=action)
+    dlg.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
     
-    dlg.add_button(gtk.STOCK_SAVE if action==gtk.FILE_CHOOSER_ACTION_SAVE else gtk.STOCK_OPEN, gtk.RESPONSE_OK)        
+    dlg.add_button(Gtk.STOCK_SAVE if action==Gtk.FileChooserAction.SAVE else Gtk.STOCK_OPEN, Gtk.ResponseType.OK)        
     dlg.set_do_overwrite_confirmation(True)        
     if not hasattr(parent,'lastPath'):
         parent.lastPath = os.path.expanduser("~")
     dlg.set_current_folder( parent.lastPath )
     
-    if dlg.run() == gtk.RESPONSE_OK:
+    if dlg.run() == Gtk.ResponseType.OK:
         filename = dlg.get_filename()
         parent.lastPath = os.path.dirname(filename)
     else:
@@ -352,7 +351,7 @@ def get_key_name(event):
         name = name + "ALT+"
     if event.state & 67108864:
         name = name + "SUPER+"
-    return name + gtk.gdk.keyval_name(event.keyval).upper()
+    return name + Gdk.keyval_name(event.keyval).upper()
      
 def get_username():
     return os.getenv('USER') or os.getenv('LOGNAME') or os.getenv('USERNAME')
@@ -379,7 +378,7 @@ def initialise_encyption_key():
     y = int(str(random.random())[2:])
     enc_passwd = "%x" % (x*y)
     try:
-        with os.fdopen(os.open(KEY_FILE, os.O_WRONLY | os.O_CREAT, 0600), 'w') as f:
+        with os.fdopen(os.open(KEY_FILE, os.O_WRONLY | os.O_CREAT, 0o600), 'w') as f:
             f.write(enc_passwd)
     except:
         msgbox("Error initialising key_file")
@@ -484,14 +483,14 @@ class Wmain(SimpleGladeApp):
         self.set_toolbar_visible(conf.SHOW_TOOLBAR)
         
         #a veces no se posiciona correctamente con 400 ms, asi que se repite el llamado 
-        gobject.timeout_add(400, lambda : self.hpMain.set_position(conf.LEFT_PANEL_WIDTH))
-        gobject.timeout_add(900, lambda : self.hpMain.set_position(conf.LEFT_PANEL_WIDTH))
+        GObject.timeout_add(400, lambda : self.hpMain.set_position(conf.LEFT_PANEL_WIDTH))
+        GObject.timeout_add(900, lambda : self.hpMain.set_position(conf.LEFT_PANEL_WIDTH))
 
         if conf.HIDE_DONATE:
             self.get_widget("btnDonate").hide_all()
         
         if conf.CHECK_UPDATES:
-            gobject.timeout_add(2000, lambda: self.check_updates())
+            GObject.timeout_add(2000, lambda: self.check_updates())
         
         #Por cada parametro de la linea de comandos buscar el host y agregar un tab
         for arg in sys.argv[1:]:
@@ -595,7 +594,7 @@ class Wmain(SimpleGladeApp):
                             
                         #esperar 2 seg antes de enviar el pass para dar tiempo a que se levante expect y prevenir que se muestre el pass
                         if widget.command[2]!=None and widget.command[2]!='':
-                            gobject.timeout_add(2000, self.send_data, widget, widget.command[2])                    
+                            GObject.timeout_add(2000, self.send_data, widget, widget.command[2])                    
                     widget.get_parent().get_parent().get_tab_label(widget.get_parent()).mark_tab_as_active()
                     return True
                 elif cmd == _CONNECT:
@@ -629,7 +628,7 @@ class Wmain(SimpleGladeApp):
             if pos != -1:                
                 self.search['index'] = i if backwards else i + 1
                 #print 'found at line %d column %d, index=%d' % (i, pos, self.search['index'])
-                gobject.timeout_add(0, lambda: self.search['terminal'].get_adjustment().set_value(i))
+                GObject.timeout_add(0, lambda: self.search['terminal'].get_adjustment().set_value(i))
                 self.search['terminal'].queue_draw()
                 break
         if pos==-1:
@@ -754,7 +753,7 @@ class Wmain(SimpleGladeApp):
                     
                 #esperar 2 seg antes de enviar el pass para dar tiempo a que se levante expect y prevenir que se muestre el pass
                 if term.command[2]!=None and term.command[2]!='':
-                    gobject.timeout_add(2000, self.send_data, term, term.command[2])
+                    GObject.timeout_add(2000, self.send_data, term, term.command[2])
             term.reset(True, False)
             tab.mark_tab_as_active()
             return True
@@ -1139,7 +1138,7 @@ class Wmain(SimpleGladeApp):
             self.on_tab_focus(v)
             self.set_terminal_logger(v, host.log)
 
-            gobject.timeout_add(200, lambda : self.wMain.set_focus(v))
+            GObject.timeout_add(200, lambda : self.wMain.set_focus(v))
             
             #Dar tiempo a la interfaz para que muestre el terminal
             while gtk.events_pending():
@@ -1204,7 +1203,7 @@ class Wmain(SimpleGladeApp):
                 
                 #esperar 2 seg antes de enviar el pass para dar tiempo a que se levante expect y prevenir que se muestre el pass
                 if password!=None and password!='':
-                    gobject.timeout_add(2000, self.send_data, v, password)
+                    GObject.timeout_add(2000, self.send_data, v, password)
             
             #esperar 3 seg antes de enviar comandos
             if host.commands!=None and host.commands!='':
@@ -1213,13 +1212,13 @@ class Wmain(SimpleGladeApp):
                 for line in host.commands.splitlines():
                     if line.startswith("##D=") and line[4:].isdigit():
                         if len(lines):
-                            gobject.timeout_add(basetime, self.send_data, v, "\r".join(lines))
+                            GObject.timeout_add(basetime, self.send_data, v, "\r".join(lines))
                             lines = []
                         basetime += int(line[4:])
                     else:
                         lines.append(line)
                 if len(lines):
-                    gobject.timeout_add(basetime, self.send_data, v, "\r".join(lines))
+                    GObject.timeout_add(basetime, self.send_data, v, "\r".join(lines))
             v.queue_draw()
             
             #guardar datos de consola para clonar consola
@@ -1234,7 +1233,7 @@ class Wmain(SimpleGladeApp):
     def initLeftPane(self):
         global groups       
 
-        self.treeModel = gtk.TreeStore(gobject.TYPE_STRING, gobject.TYPE_PYOBJECT, gtk.gdk.Pixbuf)
+        self.treeModel = gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_PYOBJECT, gtk.gdk.Pixbuf)
         self.treeServers.set_model(self.treeModel)
 
         self.treeServers.set_level_indentation(5)
@@ -1305,7 +1304,7 @@ class Wmain(SimpleGladeApp):
             conf.SHOW_TOOLBAR = cp.getboolean("window", "show-toolbar")
             conf.STARTUP_LOCAL = cp.getboolean("options","startup-local")
         except:
-            print "%s: %s" % (_("Entrada invalida en archivo de configuracion"), sys.exc_info()[1])
+            print("%s: %s" % (_("Entrada invalida en archivo de configuracion"), sys.exc_info()[1]))
         
         #Leer shorcuts        
         scuts = {}
@@ -1404,7 +1403,7 @@ class Wmain(SimpleGladeApp):
                 
                 groups[host.group].append( host )
             except:                
-                print "%s: %s" % (_("Entrada invalida en archivo de configuracion"), sys.exc_info()[1])
+                print("%s: %s" % (_("Entrada invalida en archivo de configuracion"), sys.exc_info()[1]))
 
     def is_node_collapsed(self, model, path, iter, nodes):
         if self.treeModel.get_value(iter, 1)==None and not self.treeServers.row_expanded(path):
@@ -1684,10 +1683,10 @@ class Wmain(SimpleGladeApp):
     
     def set_panel_visible(self, visibility):
         if visibility:
-            gobject.timeout_add(200, lambda : self.hpMain.set_position(self.hpMain.previous_position if self.hpMain.previous_position>10 else 150))
+            GObject.timeout_add(200, lambda : self.hpMain.set_position(self.hpMain.previous_position if self.hpMain.previous_position>10 else 150))
         else:       
             self.hpMain.previous_position = self.hpMain.get_position()
-            gobject.timeout_add(200, lambda : self.hpMain.set_position(0))
+            GObject.timeout_add(200, lambda : self.hpMain.set_position(0))
         self.get_widget("show_panel").set_active(visibility)
         conf.SHOW_PANEL = visibility
     
@@ -2219,7 +2218,7 @@ class Whost(SimpleGladeApp):
         path = os.path.join(glade_dir, path)
         SimpleGladeApp.__init__(self, path, root, domain, **kwargs)
         
-        self.treeModel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING)
+        self.treeModel = gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING)
         self.treeTunel.set_model(self.treeModel)
         column = gtk.TreeViewColumn(_("Local"), gtk.CellRendererText(), text=0)
         self.treeTunel.append_column( column )        
@@ -2714,7 +2713,7 @@ class Wconfig(SimpleGladeApp):
         self.btnFont.get_child().modify_font(self.btnFont.selected_font)
         
         #commandos
-        self.treeModel = gtk.TreeStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+        self.treeModel = gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         self.treeCmd.set_model(self.treeModel)
         column = gtk.TreeViewColumn(_(u"Acción"), gtk.CellRendererText(), text=0)
         column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
@@ -2730,7 +2729,7 @@ class Wconfig(SimpleGladeApp):
         column.set_expand(False)        
         self.treeCmd.append_column( column )
         
-        self.treeModel2 = gtk.TreeStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+        self.treeModel2 = gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         self.treeCustom.set_model(self.treeModel2)
         renderer = MultilineCellRenderer()
         renderer.set_property("editable", True)
@@ -2748,7 +2747,7 @@ class Wconfig(SimpleGladeApp):
         column.set_expand(False)        
         self.treeCustom.append_column( column )
         
-        slist = sorted(shortcuts.iteritems(), key=lambda (k,v): (v,k))
+        slist = sorted(shortcuts.iteritems(), key=lambda k,v: (v,k))
         
         for s in slist:
             if type(s[1])==list:
@@ -2934,7 +2933,7 @@ class Wcluster(SimpleGladeApp):
     #-- Wcluster.new {
     def new(self):        
         self.treeHosts = self.get_widget('treeHosts')
-        self.treeStore = gtk.TreeStore( gobject.TYPE_BOOLEAN, gobject.TYPE_STRING, gobject.TYPE_OBJECT )
+        self.treeStore = gtk.TreeStore( GObject.TYPE_BOOLEAN, GObject.TYPE_STRING, GObject.TYPE_OBJECT )
         for x in self.terms:
             self.treeStore.append( None, (False, x[0], x[1]) )
         self.treeHosts.set_model( self.treeStore )               
@@ -3172,7 +3171,7 @@ class CellTextView(gtk.TextView, gtk.CellEditable):
     __gtype_name__ = "CellTextView"
 
     __gproperties__ = {
-            'editing-canceled': (bool, 'Editing cancelled', 'Editing was cancelled', False, gobject.PARAM_READWRITE),
+            'editing-canceled': (bool, 'Editing cancelled', 'Editing was cancelled', False, GObject.PARAM_READWRITE),
         }
         
     def do_editing_done(self, *args):
@@ -3260,7 +3259,7 @@ class CheckUpdates(Thread):
             if web.getcode()==200:
                 new_version = web.readline().strip()
                 if len(new_version)>0 and new_version != app_version:                                
-                    self.tag = gobject.timeout_add(0, self.msg, "%s\n\nVERSION: %s" % (_("Hay una nueva version disponible en http://kuthulu.com/gcm/?module=download"), new_version), self.parent.get_widget("wMain"))
+                    self.tag = GObject.timeout_add(0, self.msg, "%s\n\nVERSION: %s" % (_("Hay una nueva version disponible en http://kuthulu.com/gcm/?module=download"), new_version), self.parent.get_widget("wMain"))
         except:            
             pass
 

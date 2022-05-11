@@ -24,8 +24,9 @@ import sys
 import re
 
 import tokenize
-import gtk
-import gtk.glade
+# import gtk
+# import gtk.glade
+from gi.repository import Gtk
 import weakref
 import inspect
 
@@ -34,38 +35,39 @@ __version__ = "1.0"
 __author__ = 'Sandino "tigrux" Flores-Moreno'
 
 def bindtextdomain(app_name, locale_dir=None):
-    """    
-    Bind the domain represented by app_name to the locale directory locale_dir.
-    It has the effect of loading translations, enabling applications for different
-    languages.
+    pass
+    # """    
+    # Bind the domain represented by app_name to the locale directory locale_dir.
+    # It has the effect of loading translations, enabling applications for different
+    # languages.
 
-    app_name:
-        a domain to look for translations, tipically the name of an application.
+    # app_name:
+    #     a domain to look for translations, tipically the name of an application.
 
-    locale_dir:
-        a directory with locales like locale_dir/lang_isocode/LC_MESSAGES/app_name.mo
-        If omitted or None, then the current binding for app_name is used.
-    """    
-    try:
-        import locale
-        import gettext
-        locale.setlocale(locale.LC_ALL, "")
-        gtk.glade.bindtextdomain(app_name, locale_dir)
-        gettext.install(app_name, locale_dir, unicode=1)
-    except (IOError,locale.Error), e:
-        #force english as default locale
-        try:
-            os.environ["LANGUAGE"] = "en_US.UTF-8"
-            locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-            gtk.glade.bindtextdomain(app_name, locale_dir)
-            gettext.install(app_name, locale_dir, unicode=1)
-            return
-        except:
-            #english didnt work, just use spanish
-            try:
-                __builtins__.__dict__["_"] = lambda x : x        
-            except:
-                __builtins__["_"] = lambda x : x
+    # locale_dir:
+    #     a directory with locales like locale_dir/lang_isocode/LC_MESSAGES/app_name.mo
+    #     If omitted or None, then the current binding for app_name is used.
+    # """    
+    # try:
+    #     import locale
+    #     import gettext
+    #     locale.setlocale(locale.LC_ALL, "")
+    #     gtk.glade.bindtextdomain(app_name, locale_dir)
+    #     gettext.install(app_name, locale_dir, unicode=1)
+    # except (IOError,locale.Error) as e:
+    #     #force english as default locale
+    #     try:
+    #         os.environ["LANGUAGE"] = "en_US.UTF-8"
+    #         locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    #         gtk.glade.bindtextdomain(app_name, locale_dir)
+    #         gettext.install(app_name, locale_dir, unicode=1)
+    #         return
+    #     except:
+    #         #english didnt work, just use spanish
+    #         try:
+    #             __builtins__.__dict__["_"] = lambda x : x        
+    #         except:
+    #             __builtins__["_"] = lambda x : x
 
 class SimpleGladeApp:
 
@@ -121,7 +123,7 @@ class SimpleGladeApp:
     def __repr__(self):
         class_name = self.__class__.__name__
         if self.main_widget:
-            root = gtk.Widget.get_name(self.main_widget)
+            root = Gtk.Widget.get_name(self.main_widget)
             repr = '%s(path="%s", root="%s")' % (class_name, self.glade_path, root)
         else:
             repr = '%s(path="%s")' % (class_name, self.glade_path)
@@ -160,18 +162,18 @@ class SimpleGladeApp:
         prefixes a widget has for each widget.
         """
         for widget in self.get_widgets():
-            widget_name = gtk.Widget.get_name(widget)
+            widget_name = Gtk.Widget.get_name(widget)
             prefixes_name_l = widget_name.split(":")
             prefixes = prefixes_name_l[ : -1]
             widget_api_name = prefixes_name_l[-1]
             widget_api_name = "_".join( re.findall(tokenize.Name, widget_api_name) )
-            gtk.Widget.set_name(widget, widget_api_name)
+            Gtk.Widget.set_name(widget, widget_api_name)
             if hasattr(self, widget_api_name):
                 raise AttributeError("instance %s already has an attribute %s" % (self,widget_api_name))
             else:
                 setattr(self, widget_api_name, widget)
                 if prefixes:
-                    gtk.Widget.set_data(widget, "prefixes", prefixes)
+                    Gtk.Widget.set_data(widget, "prefixes", prefixes)
 
     def add_prefix_actions(self, prefix_actions_proxy):
         """
@@ -193,7 +195,7 @@ class SimpleGladeApp:
 
         is_method = lambda t : callable( t[1] )
         is_prefix_action = lambda t : t[0].startswith(prefix_s)
-        drop_prefix = lambda (k,w): (k[prefix_pos:],w)
+        drop_prefix = lambda k,w: (k[prefix_pos:],w)
 
         members_t = inspect.getmembers(prefix_actions_proxy)
         methods_t = filter(is_method, members_t)
@@ -201,7 +203,7 @@ class SimpleGladeApp:
         prefix_actions_d = dict( map(drop_prefix, prefix_actions_t) )
 
         for widget in self.get_widgets():
-            prefixes = gtk.Widget.get_data(widget, "prefixes")
+            prefixes = Gtk.Widget.get_data(widget, "prefixes")
             if prefixes:
                 for prefix in prefixes:
                     if prefix in prefix_actions_d:
@@ -340,10 +342,19 @@ class SimpleGladeApp:
         pass
 
     def install_custom_handler(self, custom_handler):
-        gtk.glade.set_custom_handler(custom_handler)
+        pass
+        #gtk.glade.set_custom_handler(custom_handler)
 
     def create_glade(self, glade_path, root, domain):
-        return gtk.glade.XML(self.glade_path, root, domain)
+        # builder = Gtk.Builder()
+        # builder.add_from_file("example.glade")
+        # https://python-gtk-3-tutorial.readthedocs.io/en/latest/builder.html
+
+        # domaiun: the translation domain for the XML file (or "" for default)
+        # root:    the widget node in fname to start building from (or "")
+        builder = Gtk.Builder()
+        return builder.add_from_file(self.glade_path)
+        #return gtk.glade.XML(self.glade_path, root, domain)
 
     def get_widget(self, widget_name):
         return self.glade.get_widget(widget_name)
