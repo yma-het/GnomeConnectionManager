@@ -1,0 +1,95 @@
+* install msys2
+* install vs2015
+* clone https://github.com/wingtk/gvsbuild
+
+py build.py --debug build --vs-ver vs2015 --vs-install-path "C:\Program Files (x86)\Microsoft Visual Studio 14.0" pycairo
+py build.py --debug build --enable-gi --vs-ver vs2015 --vs-install-path "C:\Program Files (x86)\Microsoft Visual Studio 14.0" pygobject
+
+py build.py --debug build --vs-ver vs2019 --vs-install-path "D:\l2k1\Program Files\Microsoft Visual Studio\2019\Enterprise" gtk3-full
+
+copy *.dll from C:\gtk-build\gtk\x64\release\bin to .venv\Lib\site-packages\gi (or use https://github.com/lucasg/Dependencies)
+
+set GI_TYPELIB_PATH=.venv\Lib\site-packages\gi
+
+copy GObject-2.0.typelib and GLib-2.0.typelib from C:\gtk-build\gtk\x64\release\lib\girepository-1.0 to D:\l2k1\code\git-clones\GnomeConnectionManager\.venv\Lib\site-packages\gi
+copy C:\msys64\mingw64\lib\girepository-1.0 to D:\l2k1\code\git-clones\GnomeConnectionManager\.venv\Lib\site-packages\gi
+
+
+revert: https://github.com/wingtk/gvsbuild/commit/fdcbf2abd6017dde9902a1a4030960e7b5f9b883
+
+
+----------
+pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-gobject
+pacman -S mingw-w64-x86_64-python-manimpango
+pacman -S mingw-w64-x86_64-python3-pip
+pacman -S mingw-w64-x86_64-glade
+set GI_TYPELIB_PATH=C:\msys64\mingw64\lib\girepository-1.0
+c:\msys64\mingw64\bin\python.exe
+
+
+~/MINGW-packages/mingw-w64-python-manimpango
+$ git diff
+diff --git a/mingw-w64-python-manimpango/PKGBUILD b/mingw-w64-python-manimpango/PKGBUILD
+index df6eafeae..b19ed981b 100644
+--- a/mingw-w64-python-manimpango/PKGBUILD
++++ b/mingw-w64-python-manimpango/PKGBUILD
+@@ -4,6 +4,7 @@ _realname=manimpango
+ pkgbase=mingw-w64-python-${_realname}
+ pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
+ pkgver=0.4.1
++commit_hash=954e887c2e418927037b575f480ab13a3f7efd59
+ pkgrel=1
+ pkgdesc="Bindings for Pango for using with Manim. (mingw-w64)"
+ arch=('any')
+@@ -16,14 +17,17 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cython"
+              "${MINGW_PACKAGE_PREFIX}-python-setuptools"
+              "${MINGW_PACKAGE_PREFIX}-cc"
+              "${MINGW_PACKAGE_PREFIX}-pkg-config")
+-source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/ManimCommunity/ManimPango/releases/download/v${pkgver}/manimpango-${pkgver}.tar.gz")
+-sha512sums=('ef428784cba33d25898e4a601da41e7eb0951bd8e5ef15eea93d61bb3e3fc8167be24507c685379d3e0d914aa18ab1adb2bc1f5b55c8aae5a6b21495bb6d6197')
++source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/ManimCommunity/ManimPango/archive/${commit_hash}.tar.gz")
++sha512sums=('15116ba3109955226c14b26490363f45909deae958444d93533c6e3916a00f17f2c8cd9af4cffa25e8b7a42fd016b26cd680c74e72c31a878e2a253058a2e016')
+
+ prepare() {
+   # Force cython rebuild
+-  rm -f ${_realname}-${pkgver}/manimpango/*.c
++  rm -f ${_realname}-${commit_hash}/manimpango/*.c
+   rm -rf python-build-${CARCH} | true
+-  cp -r "${_realname}-${pkgver}" "python-build-${CARCH}"
++  cp -r "${_realname}-${commit_hash}" "python-build-${CARCH}"
++  pushd "python-build-${CARCH}"
++  patch setup.py ../../disable_attributes_ext.patch
++  popd
+ }
+
+ build() {
+
+
+MSYS ~/MINGW-packages/mingw-w64-python-manimpango
+$ cat disable_attributes_ext.patch
+--- setup.py    2022-05-17 15:29:10.532366900 +0300
++++ setup.py_patched    2022-05-17 15:29:31.647765100 +0300
+@@ -237,11 +237,11 @@
+         [str(base_file / ("register_font" + ext))],
+         **returns,
+     ),
+-    Extension(
+-        "manimpango.attributes._attributes",
+-        [str(base_file / "attributes" / ("attributes" + ext))],
+-        **returns,
+-    ),
++    #Extension(
++    #    "manimpango.attributes._attributes",
++    #    [str(base_file / "attributes" / ("attributes" + ext))],
++    #    **returns,
++    #),
+     Extension(
+         "manimpango.utils._utils",
+         [str(base_file / "utils" / ("utils" + ext))],
+
+
+
+
+!!! build /mingw-w64-python-manimpango in / not in /home/user/MINGW-packages/mingw-w64-python-manimpango/ because of too long path for windows
+	
+

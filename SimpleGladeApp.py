@@ -110,13 +110,14 @@ class SimpleGladeApp:
             except TypeError:
                 setattr(self, key, value)
         self.glade = None
+        self.builder = None
         self.install_custom_handler(self.custom_handler)
         self.glade = self.create_glade(self.glade_path, root, domain)
         if root:
             self.main_widget = self.get_widget(root)
         else:
             self.main_widget = None
-        self.normalize_names()
+        #self.normalize_names()
         self.add_callbacks(self)
         self.new()
 
@@ -150,7 +151,8 @@ class SimpleGladeApp:
             an instance with methods as code of callbacks.
             It means it has methods like on_button1_clicked, on_entry1_activate, etc.
         """        
-        self.glade.signal_autoconnect(callbacks_proxy)
+        self.builder.connect_signals(callbacks_proxy)
+        #self.glade.signal_autoconnect(callbacks_proxy)
 
     def normalize_names(self):
         """
@@ -352,12 +354,13 @@ class SimpleGladeApp:
 
         # domaiun: the translation domain for the XML file (or "" for default)
         # root:    the widget node in fname to start building from (or "")
-        builder = Gtk.Builder()
-        return builder.add_from_file(self.glade_path)
-        #return gtk.glade.XML(self.glade_path, root, domain)
+        self.builder = Gtk.Builder()
+        print(dir(self.builder))
+        return self.builder.add_from_file(self.glade_path)
+        #return Gtk.glade.XML(self.glade_path, root, domain)
 
     def get_widget(self, widget_name):
-        return self.glade.get_widget(widget_name)
+        return self.builder.get_object(widget_name)
 
     def get_widgets(self):
-        return self.glade.get_widget_prefix("")        
+        return self.builder.get_objects()

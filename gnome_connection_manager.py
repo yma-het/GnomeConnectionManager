@@ -157,6 +157,7 @@
 #        - Boton donar
 
 from __future__ import with_statement
+from os.path import expanduser
 import os
 import operator
 import sys
@@ -164,13 +165,16 @@ import base64
 import time
 import tempfile
 
-try:
-    from gi.repository import Gtk
-    from gi.repository import Gdk
-    from gi.repository import GObject
-except:
-    print("pygtk required", file=sys.stderr)
-    sys.exit(1)
+#try:
+import gi
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import GObject
+#except:
+#    print("pygtk required", file=sys.stderr)
+#    sys.exit(1)
   
 # try:
 #     import vte
@@ -194,7 +198,7 @@ Gdk.threads_init()
 from SimpleGladeApp import SimpleGladeApp
 from SimpleGladeApp import bindtextdomain
 
-from configparser import ConfigParser
+from configparser import RawConfigParser
 import manimpango as pango
 import pyAES
 
@@ -203,18 +207,21 @@ app_version = "1.1.0"
 app_web = "http://www.kuthulu.com/gcm"
 app_fileversion = "1"
 
-BASE_PATH = '/usr/share/gnome-connection-manager'
+#BASE_PATH = '/usr/share/gnome-connection-manager'
+BASE_PATH = './'
 
 SSH_BIN = 'ssh'
 TEL_BIN = 'telnet'
-SHELL   = os.environ["SHELL"]
+SHELL   = "c:\\Windows\\System32\\cmd.exe"
 
 SSH_COMMAND = BASE_PATH + "/ssh.expect"
-CONFIG_FILE = os.getenv("HOME") + "/.gcm/gcm.conf"
-KEY_FILE = os.getenv("HOME") + "/.gcm/.gcm.key"
 
-if not os.path.exists(os.getenv("HOME") + "/.gcm"):
-    os.makedirs(os.getenv("HOME") + "/.gcm")
+home = expanduser("~")
+CONFIG_FILE = home + "/.gcm/gcm.conf"
+KEY_FILE = home + "/.gcm/.gcm.key"
+
+if not os.path.exists(home + "/.gcm"):
+    os.makedirs(home + "/.gcm")
 
 domain_name="gcm-lang"
 
@@ -318,7 +325,7 @@ def show_font_dialog(parent, title, button):
     response = parent.dlgFont.run()
 
     if response == Gtk.ResponseType.OK:        
-        button.selected_font = pango.FontDescription(fontsel.get_font_name())        
+        button.selected_font = pango.fonts.FontDescription(fontsel.get_font_name())        
         button.set_label(button.selected_font.to_string())
         button.get_child().modify_font(button.selected_font)
     parent.dlgFont.hide()
@@ -450,7 +457,7 @@ class Wmain(SimpleGladeApp):
         if conf.VERSION == 0:
             initialise_encyption_key()
         
-        settings = gtk.settings_get_default()
+        settings = Gtk.Settings.get_default()
         settings.props.gtk_menu_bar_accel = None
 
         self.real_transparency = False
@@ -471,7 +478,7 @@ class Wmain(SimpleGladeApp):
         for x in self.nbConsole.get_children():
             self.nbConsole.remove(x)
         self.nbConsole.set_scrollable(True)
-        self.nbConsole.set_group_id(11)
+        self.nbConsole.set_group_name("tabs_interchangabe")
         self.nbConsole.connect('page_removed', self.on_page_removed)        
         self.nbConsole.connect("page-added", self.on_page_added)                                        
         
@@ -503,8 +510,8 @@ class Wmain(SimpleGladeApp):
                         if h.name==name:
                             self.addTab(self.nbConsole, h)
                             break                
-        
-        self.get_widget('txtSearch').modify_text(gtk.STATE_NORMAL, gtk.gdk.Color('darkgray'))
+        _, color = Gdk.Color.parse('\#FF4D5151')
+        self.get_widget('txtSearch').modify_text(Gtk.StateType.NORMAL, color)
         
         if conf.STARTUP_LOCAL:
             self.addTab(self.nbConsole,'local')
@@ -785,192 +792,193 @@ class Wmain(SimpleGladeApp):
             return True
                 
     def createMenu(self):
-        self.popupMenu = gtk.Menu()
-        self.popupMenu.mnuCopy = menuItem = gtk.ImageMenuItem(_("Copiar"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        self.popupMenu = Gtk.Menu()
+        self.popupMenu.mnuCopy = menuItem = Gtk.ImageMenuItem(label="Copiar")
+        menuItem.set_image(Gtk.Image.new_from_icon_name("view-copy", Gtk.IconSize.MENU))
+        #menuItem.set_image(Gtk.image_new_from_stock(Gtk.STOCK_COPY, Gtk.ICON_SIZE_MENU))
         self.popupMenu.append(menuItem)
         menuItem.connect("activate", self.on_popupmenu, 'C')
         menuItem.show()
         
-        self.popupMenu.mnuPaste = menuItem = gtk.ImageMenuItem(_("Pegar"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_PASTE, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'V')
-        menuItem.show()
+        # self.popupMenu.mnuPaste = menuItem = gtk.ImageMenuItem(_("Pegar"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_PASTE, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'V')
+        # menuItem.show()
         
-        self.popupMenu.mnuCopyPaste = menuItem = gtk.ImageMenuItem(_("Copiar y Pegar"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_INDEX, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'CV')
-        menuItem.show()
+        # self.popupMenu.mnuCopyPaste = menuItem = gtk.ImageMenuItem(_("Copiar y Pegar"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_INDEX, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'CV')
+        # menuItem.show()
         
-        self.popupMenu.mnuSelect = menuItem = gtk.ImageMenuItem(_("Seleccionar todo"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_SELECT_ALL, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'A')
-        menuItem.show()
+        # self.popupMenu.mnuSelect = menuItem = gtk.ImageMenuItem(_("Seleccionar todo"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_SELECT_ALL, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'A')
+        # menuItem.show()
         
-        self.popupMenu.mnuCopyAll = menuItem = gtk.ImageMenuItem(_("Copiar todo"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_SELECT_ALL, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'CA')
-        menuItem.show()
+        # self.popupMenu.mnuCopyAll = menuItem = gtk.ImageMenuItem(_("Copiar todo"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_SELECT_ALL, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'CA')
+        # menuItem.show()
         
-        self.popupMenu.mnuSelect = menuItem = gtk.ImageMenuItem(_("Guardar buffer en archivo"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_SAVE, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'S')
-        menuItem.show()
+        # self.popupMenu.mnuSelect = menuItem = gtk.ImageMenuItem(_("Guardar buffer en archivo"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_SAVE, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'S')
+        # menuItem.show()
         
-        menuItem = gtk.MenuItem()
-        self.popupMenu.append(menuItem)
-        menuItem.show()
+        # menuItem = gtk.MenuItem()
+        # self.popupMenu.append(menuItem)
+        # menuItem.show()
         
-        self.popupMenu.mnuReset = menuItem = gtk.ImageMenuItem(_("Reiniciar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'RS2')
-        menuItem.show()
+        # self.popupMenu.mnuReset = menuItem = gtk.ImageMenuItem(_("Reiniciar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'RS2')
+        # menuItem.show()
         
-        self.popupMenu.mnuClear = menuItem = gtk.ImageMenuItem(_("Reiniciar y Limpiar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'RC2')
-        menuItem.show()
+        # self.popupMenu.mnuClear = menuItem = gtk.ImageMenuItem(_("Reiniciar y Limpiar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'RC2')
+        # menuItem.show()
         
-        self.popupMenu.mnuClone = menuItem = gtk.ImageMenuItem(_("Clonar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'CC2')
-        menuItem.show()
+        # self.popupMenu.mnuClone = menuItem = gtk.ImageMenuItem(_("Clonar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'CC2')
+        # menuItem.show()
 
-        self.popupMenu.mnuLog = menuItem = gtk.CheckMenuItem(_("Habilitar log"))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'L2')
-        menuItem.show()
+        # self.popupMenu.mnuLog = menuItem = gtk.CheckMenuItem(_("Habilitar log"))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'L2')
+        # menuItem.show()
         
-        self.popupMenu.mnuClose = menuItem = gtk.ImageMenuItem(_("Cerrar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU))
-        self.popupMenu.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'X')
-        menuItem.show()
+        # self.popupMenu.mnuClose = menuItem = gtk.ImageMenuItem(_("Cerrar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU))
+        # self.popupMenu.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'X')
+        # menuItem.show()
         
-        menuItem = gtk.MenuItem()
+        menuItem = Gtk.MenuItem()
         self.popupMenu.append(menuItem)
         menuItem.show()
         
         #Menu de comandos personalizados
-        self.popupMenu.mnuCommands = gtk.Menu()
+        self.popupMenu.mnuCommands = Gtk.Menu()
         
-        self.popupMenu.mnuCmds = menuItem = gtk.ImageMenuItem(_("Comandos personalizados"))
+        self.popupMenu.mnuCmds = menuItem = Gtk.ImageMenuItem(label=("Comandos personalizados"))
         menuItem.set_submenu(self.popupMenu.mnuCommands)
         self.popupMenu.append(menuItem)
         menuItem.show()
         self.populateCommandsMenu()
                 
         #Menu contextual para panel de servidores
-        self.popupMenuFolder = gtk.Menu()
+        self.popupMenuFolder = Gtk.Menu()
         
-        self.popupMenuFolder.mnuConnect = menuItem = gtk.ImageMenuItem(_("Conectar"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_EXECUTE, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_btnConnect_clicked)
-        menuItem.show()
+        # self.popupMenuFolder.mnuConnect = menuItem = Gtk.ImageMenuItem(_("Conectar"))
+        # menuItem.set_image(Gtk.image_new_from_stock(gtk.STOCK_EXECUTE, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_btnConnect_clicked)
+        # menuItem.show()
 
-        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copiar Direccion"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'H')
-        menuItem.show()
+        # self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copiar Direccion"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'H')
+        # menuItem.show()
 
-        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard <--"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'SCPF')
-        menuItem.show()
+        # self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard <--"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'SCPF')
+        # menuItem.show()
 
-        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard -->"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'SCPT')
-        menuItem.show()
+        # self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard -->"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'SCPT')
+        # menuItem.show()
 
-        self.popupMenuFolder.mnuAdd = menuItem = gtk.ImageMenuItem(_("Agregar Host"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_btnAdd_clicked)
-        menuItem.show()
+        # self.popupMenuFolder.mnuAdd = menuItem = gtk.ImageMenuItem(_("Agregar Host"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_btnAdd_clicked)
+        # menuItem.show()
         
-        self.popupMenuFolder.mnuEdit = menuItem = gtk.ImageMenuItem(_("Editar"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_EDIT, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_bntEdit_clicked)
-        menuItem.show()
+        # self.popupMenuFolder.mnuEdit = menuItem = gtk.ImageMenuItem(_("Editar"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_EDIT, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_bntEdit_clicked)
+        # menuItem.show()
         
-        self.popupMenuFolder.mnuDel = menuItem = gtk.ImageMenuItem(_("Eliminar"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_DELETE, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_btnDel_clicked)
-        menuItem.show()
+        # self.popupMenuFolder.mnuDel = menuItem = gtk.ImageMenuItem(_("Eliminar"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_DELETE, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_btnDel_clicked)
+        # menuItem.show()
         
-        self.popupMenuFolder.mnuDup = menuItem = gtk.ImageMenuItem(_("Duplicar Host"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_DND_MULTIPLE, gtk.ICON_SIZE_MENU))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'D')
-        menuItem.show()
+        # self.popupMenuFolder.mnuDup = menuItem = gtk.ImageMenuItem(_("Duplicar Host"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_DND_MULTIPLE, gtk.ICON_SIZE_MENU))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'D')
+        # menuItem.show()
         
-        menuItem = gtk.MenuItem()
-        self.popupMenuFolder.append(menuItem)
-        menuItem.show()
+        # menuItem = gtk.MenuItem()
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.show()
         
-        self.popupMenuFolder.mnuExpand = menuItem = gtk.ImageMenuItem(_("Expandir todo"))        
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", lambda *args: self.treeServers.expand_all())
-        menuItem.show()
+        # self.popupMenuFolder.mnuExpand = menuItem = gtk.ImageMenuItem(_("Expandir todo"))        
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", lambda *args: self.treeServers.expand_all())
+        # menuItem.show()
         
-        self.popupMenuFolder.mnuCollapse = menuItem = gtk.ImageMenuItem(_("Contraer todo"))
-        self.popupMenuFolder.append(menuItem)
-        menuItem.connect("activate", lambda *args: self.treeServers.collapse_all())
-        menuItem.show()
+        # self.popupMenuFolder.mnuCollapse = menuItem = gtk.ImageMenuItem(_("Contraer todo"))
+        # self.popupMenuFolder.append(menuItem)
+        # menuItem.connect("activate", lambda *args: self.treeServers.collapse_all())
+        # menuItem.show()
         
         
-        #Menu contextual para tabs
-        self.popupMenuTab = gtk.Menu()
+        # #Menu contextual para tabs
+        # self.popupMenuTab = gtk.Menu()
         
-        self.popupMenuTab.mnuRename = menuItem = gtk.ImageMenuItem(_("Renombrar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_EDIT, gtk.ICON_SIZE_MENU))
-        self.popupMenuTab.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'R')
-        menuItem.show()
+        # self.popupMenuTab.mnuRename = menuItem = gtk.ImageMenuItem(_("Renombrar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_EDIT, gtk.ICON_SIZE_MENU))
+        # self.popupMenuTab.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'R')
+        # menuItem.show()
         
-        self.popupMenuTab.mnuReset = menuItem = gtk.ImageMenuItem(_("Reiniciar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_MENU))
-        self.popupMenuTab.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'RS')
-        menuItem.show()
+        # self.popupMenuTab.mnuReset = menuItem = gtk.ImageMenuItem(_("Reiniciar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_MENU))
+        # self.popupMenuTab.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'RS')
+        # menuItem.show()
         
-        self.popupMenuTab.mnuClear = menuItem = gtk.ImageMenuItem(_("Reiniciar y Limpiar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
-        self.popupMenuTab.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'RC')
-        menuItem.show()
+        # self.popupMenuTab.mnuClear = menuItem = gtk.ImageMenuItem(_("Reiniciar y Limpiar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
+        # self.popupMenuTab.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'RC')
+        # menuItem.show()
         
-        self.popupMenuTab.mnuReopen = menuItem = gtk.ImageMenuItem(_("Reconectar al host"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_MENU))
-        self.popupMenuTab.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'RO')                
-        #menuItem.show()
+        # self.popupMenuTab.mnuReopen = menuItem = gtk.ImageMenuItem(_("Reconectar al host"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_MENU))
+        # self.popupMenuTab.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'RO')                
+        # #menuItem.show()
         
-        self.popupMenuTab.mnuClone = menuItem = gtk.ImageMenuItem(_("Clonar consola"))
-        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
-        self.popupMenuTab.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'CC')
-        menuItem.show()
+        # self.popupMenuTab.mnuClone = menuItem = gtk.ImageMenuItem(_("Clonar consola"))
+        # menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
+        # self.popupMenuTab.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'CC')
+        # menuItem.show()
 
-        self.popupMenuTab.mnuLog = menuItem = gtk.CheckMenuItem(_("Habilitar log"))
-        self.popupMenuTab.append(menuItem)
-        menuItem.connect("activate", self.on_popupmenu, 'L')
-        menuItem.show()
+        # self.popupMenuTab.mnuLog = menuItem = gtk.CheckMenuItem(_("Habilitar log"))
+        # self.popupMenuTab.append(menuItem)
+        # menuItem.connect("activate", self.on_popupmenu, 'L')
+        # menuItem.show()
         
     def createMenuItem(self, shortcut, label):
         menuItem = gtk.MenuItem('')
@@ -1101,7 +1109,7 @@ class Wmain(SimpleGladeApp):
             if len(conf.FONT)==0:
                 conf.FONT = 'monospace'
             else:
-                v.set_font(pango.FontDescription(conf.FONT))
+                v.set_font(pango.fonts.FontDescription(conf.FONT))
             
             scrollPane = gtk.ScrolledWindow()            
             scrollPane.connect('button_press_event', lambda *args: True)
@@ -1224,7 +1232,7 @@ class Wmain(SimpleGladeApp):
             #guardar datos de consola para clonar consola
             v.host = host
         except:
-            msgbox("%s: %s" % (_("Error al conectar con servidor"), sys.exc_info()[1]))
+            msgbox("Error connecting server: {}".format(sys.exc_info()[1]))
             
     def send_data(self, terminal, data):
         terminal.feed_child('%s\r' % (data))        
@@ -1233,27 +1241,27 @@ class Wmain(SimpleGladeApp):
     def initLeftPane(self):
         global groups       
 
-        self.treeModel = gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_PYOBJECT, gtk.gdk.Pixbuf)
+        self.treeModel = Gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_PYOBJECT, GdkPixbuf.Pixbuf)
         self.treeServers.set_model(self.treeModel)
 
         self.treeServers.set_level_indentation(5)
         #Force the alternating row colors, by default it's off with one column
         self.treeServers.set_property('rules-hint', True)
-        gtk.rc_parse_string( """
+        Gtk.rc_parse_string( """
                 style "custom-treestyle"{
                     GtkTreeView::allow-rules = 1
                 }
                 widget "*treeServers*" style "custom-treestyle"
             """)
-        column = gtk.TreeViewColumn()
+        column = Gtk.TreeViewColumn()
         column.set_title('Servers')
         self.treeServers.append_column( column )
 
-        renderer = gtk.CellRendererPixbuf()
+        renderer = Gtk.CellRendererPixbuf()
         column.pack_start(renderer, expand=False)
         column.add_attribute(renderer, 'pixbuf', 2)
 
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         column.pack_start(renderer, expand=True)
         column.add_attribute(renderer, 'text', 0)
         
@@ -1276,7 +1284,7 @@ class Wmain(SimpleGladeApp):
     def loadConfig(self):
         global groups
         
-        cp= ConfigParser.RawConfigParser(  )
+        cp = RawConfigParser()
         cp.read( CONFIG_FILE )
         
         #Leer configuracion general
@@ -1304,7 +1312,7 @@ class Wmain(SimpleGladeApp):
             conf.SHOW_TOOLBAR = cp.getboolean("window", "show-toolbar")
             conf.STARTUP_LOCAL = cp.getboolean("options","startup-local")
         except:
-            print("%s: %s" % (_("Entrada invalida en archivo de configuracion"), sys.exc_info()[1]))
+            print("Invalid entry in configuration file: {}".format(sys.exc_info()[1]))
         
         #Leer shorcuts        
         scuts = {}
@@ -1416,7 +1424,7 @@ class Wmain(SimpleGladeApp):
         
     def set_collapsed_nodes(self):
         self.treeServers.expand_all()
-        if self.treeModel.get_iter_root():
+        if self.treeModel.get_iter_first():
             for node in conf.COLLAPSED_FOLDERS.split(","): 
                 if node!='':
                     self.treeServers.collapse_row(node)
@@ -1432,11 +1440,13 @@ class Wmain(SimpleGladeApp):
         self.menuServers.foreach(self.menuServers.remove)
         self.treeModel.clear()
         
-        iconHost = self.treeServers.render_icon("gtk-network", size=gtk.ICON_SIZE_BUTTON, detail=None)
-        iconDir = self.treeServers.render_icon("gtk-directory", size=gtk.ICON_SIZE_BUTTON, detail=None)             
+        iconHost = self.treeServers.render_icon("gtk-network", size=Gtk.IconSize.BUTTON, detail=None)
+        iconDir = self.treeServers.render_icon("gtk-directory", size=Gtk.IconSize.BUTTON, detail=None)             
         
-        grupos = groups.keys()
-        grupos.sort(lambda x,y: cmp(y,x))
+        def cmp(a, b):
+            return (a > b) - (a < b) 
+        grupos = sorted(groups.keys(), key=lambda x,y: cmp(y,x))
+        #grupos.sort(lambda x,y: cmp(y,x))
         
         for grupo in grupos:
             group = None
@@ -1497,7 +1507,7 @@ class Wmain(SimpleGladeApp):
     def writeConfig(self): 
         global groups
         
-        cp= ConfigParser.RawConfigParser( )
+        cp = RawConfigParser()
         cp.read( CONFIG_FILE + ".tmp" )
         
         cp.add_section("options")
@@ -1734,8 +1744,8 @@ class Wmain(SimpleGladeApp):
             
             #abrir archivo con lista de servers y cargarlos en el arbol
             try:
-                cp= ConfigParser.RawConfigParser( )
-                cp.read( filename )
+                cp = RawConfigParser()
+                cp.read(filename)
             
                 #validar el pass
                 s = decrypt(password, cp.get("gcm", "gcm"))
@@ -1775,7 +1785,7 @@ class Wmain(SimpleGladeApp):
                 return
                 
             try:
-                cp= ConfigParser.RawConfigParser( )
+                cp = RawConfigParser()
                 cp.read( filename + ".tmp" )
                 i=1
                 cp.add_section("gcm")
@@ -2255,8 +2265,8 @@ class Whost(SimpleGladeApp):
         self.txtComamnds = self.get_widget("txtCommands")
         self.chkComamnds = self.get_widget("chkCommands")
         buf = self.txtComamnds.get_buffer()
-        buf.create_tag('DELAY1', style=pango.STYLE_ITALIC, foreground='darkgray')
-        buf.create_tag('DELAY2', style=pango.STYLE_ITALIC, foreground='cadetblue')
+        buf.create_tag('DELAY1', style=pango.Style.ITALIC, foreground='darkgray')
+        buf.create_tag('DELAY2', style=pango.Style.ITALIC, foreground='cadetblue')
         buf.connect("changed", self.update_texttags)
         self.chkKeepAlive = self.get_widget("chkKeepAlive")
         self.txtKeepAlive = self.get_widget("txtKeepAlive")
@@ -2713,7 +2723,7 @@ class Wconfig(SimpleGladeApp):
         self.btnFont.get_child().modify_font(self.btnFont.selected_font)
         
         #commandos
-        self.treeModel = gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
+        self.treeModel = Gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         self.treeCmd.set_model(self.treeModel)
         column = gtk.TreeViewColumn(_(u"Acción"), gtk.CellRendererText(), text=0)
         column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
@@ -2729,7 +2739,7 @@ class Wconfig(SimpleGladeApp):
         column.set_expand(False)        
         self.treeCmd.append_column( column )
         
-        self.treeModel2 = gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
+        self.treeModel2 = Gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         self.treeCustom.set_model(self.treeModel2)
         renderer = MultilineCellRenderer()
         renderer.set_property("editable", True)
@@ -2921,7 +2931,7 @@ class Wconfig(SimpleGladeApp):
 
 
 class Wcluster(SimpleGladeApp):
-    COLOR = gtk.gdk.Color('#FFFC00')
+    COLOR = Gdk.Color.parse('#FFFC00')
     
     def __init__(self, path="gnome-connection-manager.glade",
                  root="wCluster",
@@ -3025,11 +3035,11 @@ class Wcluster(SimpleGladeApp):
     #-- Wcluster.on_txtCommands_key_press_event }
 
 
-class NotebookTabLabel(gtk.HBox):
+class NotebookTabLabel(Gtk.HBox):
     '''Notebook tab label with close button.
     '''
     def __init__(self, title, owner_, widget_, popup_):
-        gtk.HBox.__init__(self, False, 0)
+        Gtk.HBox.__init__(self, False, 0)
         
         self.title = title
         self.owner = owner_
@@ -3120,9 +3130,9 @@ class NotebookTabLabel(gtk.HBox):
         elif event.type == gtk.gdk.BUTTON_PRESS and event.button == 2:    
             self.close_tab(self.widget)
 
-class EntryDialog( gtk.Dialog):
+class EntryDialog(Gtk.Dialog):
     def __init__(self, title, message, default_text='', modal=True, mask=False):
-        gtk.Dialog.__init__(self)
+        Gtk.Dialog.__init__(self)
         self.set_title(title)
         self.connect("destroy", self.quit)
         self.connect("delete_event", self.quit)
@@ -3166,7 +3176,7 @@ class EntryDialog( gtk.Dialog):
 
 
 
-class CellTextView(gtk.TextView, gtk.CellEditable):
+class CellTextView(Gtk.TextView, Gtk.CellEditable):
 
     __gtype_name__ = "CellTextView"
 
@@ -3192,12 +3202,12 @@ class CellTextView(gtk.TextView, gtk.CellEditable):
         self.get_buffer().set_text(text)
 
 
-class MultilineCellRenderer(gtk.CellRendererText):
+class MultilineCellRenderer(Gtk.CellRendererText):
 
     __gtype_name__ = "MultilineCellRenderer"
 
     def __init__(self):
-        gtk.CellRendererText.__init__(self)
+        Gtk.CellRendererText.__init__(self)
         self._in_editor_menu = False
 
     def _on_editor_focus_out_event(self, editor, *args):
